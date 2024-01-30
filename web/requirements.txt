@@ -1,9 +1,10 @@
 Flask==1.1.2
-keras==2.8.0
+# keras==2.8.0
 matplotlib==3.5.1
-mtcnn==0.1.1
+# mtcnn==0.1.1
 numpy==1.22.3
 opencv_python==4.5.5.64
+scikit-learn==1.4.0
 pandas==1.4.1
 Pillow==9.1.1
 
