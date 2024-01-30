@@ -94,21 +94,33 @@
       {% endwith %}
       </p>
 
-      {% for filename , clustering,vol in (RESULTAT) %}
+      {% comment %} {% for filename , clustering,vol in (RESULTAT) %}
 
-      <div>
-        <img src="{{ url_for('display_image', filename=filename) }}">
+      
+      {% endfor %} {% endcomment %}
+
+      {% if RESULTAT %}
+
+      <div class="row">
+        <div class="col">
+          <div ><img src="{{ origine_image_path }}"></div>
+          <div ><img src="{{ origine_image_path }}"></div>
+        </div>
+        
 
 
 
 
-        <h4 class="text-primary"> {{clustering}} Clustering </h4>
+        <h4 class="text-primary"> {{ clustering }} Clustering </h4>
 
-        <h4 class="text-info"> {{vol}}Threshold </h4>
+        <h4 class="text-info"> {{ threshold }} Threshold </h4>
 
 
       </div>
-      {% endfor %}
+
+      {% endif %}
+
+
       <h2>Select une fichier pour Test</h2>
       <form method="post" action="" enctype="multipart/form-data">
         <div class="form-group">
