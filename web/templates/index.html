@@ -94,26 +94,23 @@
       {% endwith %}
       </p>
 
-      {% for filename ,data,p1,p2 in (RESULTAT) %}
+      {% for filename , clustering,vol in (RESULTAT) %}
 
       <div>
         <img src="{{ url_for('display_image', filename=filename) }}">
 
-        {% if data == 1 %}
 
 
-        <h4 class="text-primary"> {{p2*100}} % porte une masque </h4>
-        <!-- <img src=''>   -->
 
-        {% elif data == 0 %}
-        <h4 class="text-danger" style="color: red;"> {{p1*100 }}% il ne porte pas une masque </h4>
-        <!-- <img src=''> -->
-        {% endif%}
+        <h4 class="text-primary"> {{clustering}} Clustering </h4>
+
+        <h4 class="text-info"> {{vol}}Threshold </h4>
+
 
       </div>
       {% endfor %}
       <h2>Select une fichier pour Test</h2>
-      <form method="post" action="{{url_for('functional')}}" enctype="multipart/form-data">
+      <form method="post" action="" enctype="multipart/form-data">
         <div class="form-group">
           <input type="file" name="files[]" multiple="true" autocomplete="off" class="form-control" required>
         </div>

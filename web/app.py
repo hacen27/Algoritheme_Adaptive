@@ -2,7 +2,7 @@ from flask import Flask, flash, request, redirect, url_for, render_template
 from statistics import mode
 from warnings import filters
 
-
+from werkzeug.utils import secure_filename
 import matplotlib.pyplot as plt 
 
 import os
@@ -42,6 +42,9 @@ def upload_image():
         return redirect(request.url)
 
     files = request.files.getlist('files[]')
+    clustering = request.form.get('clustering')
+    vol = request.form.get('vol')
+
     file_names=[] 
     for file in files:   
         if file and allowed_file(file.filename):
@@ -62,8 +65,9 @@ def upload_image():
             return redirect(request.url)
 
     flash('Image est charger avec succes')
-    preds,prc1,prc2 = makePrediction(file_names)
-    Zipp=zip(file_names,preds,prc1,prc2)
+    
+    flash(f'Clastring et Vol',clustering + vol)
+    Zipp=zip(file_names,clustering,vol)
     return render_template('index.html', RESULTAT=Zipp )
 
 @app.route('/display/<filename>')
@@ -71,38 +75,6 @@ def display_image(filename):
     return redirect(url_for('static', filename='uploads/' + filename), code=301)
 
 
-
-
-
-@app.route('/fonctional', methods=['POST'])
-def functional():
-    if 'files[]' not in request.files:
-        flash('No file part')
-        return redirect(request.url)
-   
-    files = request.files.getlist('files[]')
-    file_names=[] 
-    for file in files:   
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_names.append(filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)) 
-            
-            img = Image.open("static/uploads/"+ filename)
-            
-            if img.width > 190 or img.height > 150:
-                output_size = (190, 150)
-                img.thumbnail(output_size)
-                img.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-         
-        else:
-            flash('Mettre un image de types  - png, jpg, jpeg, gif')
-            return redirect(request.url)
-
-    flash('Image est charger par succes')
-   
-    Zipp=zip(file_names,)
-    return render_template('fonctional.html', RESULTAT=Zipp)
 
 
 
