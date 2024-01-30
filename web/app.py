@@ -66,7 +66,7 @@ def upload_image():
 
     flash('Image est charger avec succes')
     
-    flash(f'Clastring et Vol',clustering + vol)
+    
     Zipp=zip(file_names,clustering,vol)
     return render_template('index.html', RESULTAT=Zipp )
 
