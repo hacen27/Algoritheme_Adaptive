@@ -100,9 +100,20 @@ def upload_image():
 
     flash('Image est charger avec succes')
     
+    # flash(f'Clastring et Vol',clustering + threshold)
+    # Zipp=zip(file_names,clustering,threshold)
     
-    Zipp=zip(file_names,clustering,vol)
-    return render_template('index.html', RESULTAT=Zipp )
+    image_path = os.path.join('static','uploads/', file_names[0])
+    image_base64_string = imageSegmentor(image_path,clustering,threshold)
+    
+    context = {
+        "n_clusters" : clustering,
+        "" : threshold,
+        "origine_image_path" : image_path,
+        "segmented_image_base64_string" : image_base64_string
+    }
+    
+    return render_template('index.html', RESULTAT=context )
 
 @app.route('/display/<filename>')
 def display_image(filename):
