@@ -94,30 +94,23 @@
       {% endwith %}
       </p>
 
-      {% comment %} {% for filename , clustering,vol in (RESULTAT) %}
 
-      
-      {% endfor %} {% endcomment %}
 
       {% if RESULTAT %}
-
       <div class="row">
-        <div class="col">
-          <div ><img src="{{ origine_image_path }}"></div>
-          <div ><img src="{{ origine_image_path }}"></div>
+        <div class="col-md-6">
+          <h3>Image Originale</h3>
+          <img src="{{ url_for('static', filename=RESULTAT.origine_image_path.split('/')[-1]) }}" alt="Image Originale"
+            class="img-fluid">
         </div>
-        
-
-
-
-
-        <h4 class="text-primary"> {{ clustering }} Clustering </h4>
-
-        <h4 class="text-info"> {{ threshold }} Threshold </h4>
-
-
+        <div class="col-md-6">
+          <h3>Image Segmentée</h3>
+          <img src="data:image/jpeg;base64,{{ RESULTAT.segmented_image_base64_string }}" alt="Image Segmentée"
+            class="img-fluid">
+        </div>
       </div>
-
+      <h4 class="text-primary"> {{ RESULTAT.n_clusters }} Clustering </h4>
+      <h4 class="text-info"> {{ RESULTAT.threshold }} Threshold </h4>
       {% endif %}
 
 

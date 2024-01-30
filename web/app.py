@@ -108,7 +108,7 @@ def upload_image():
     
     context = {
         "n_clusters" : clustering,
-        "" : threshold,
+        "threshold" : threshold,
         "origine_image_path" : image_path,
         "segmented_image_base64_string" : image_base64_string
     }
