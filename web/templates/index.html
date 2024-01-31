@@ -97,18 +97,21 @@
 
 
       {% if RESULTAT %}
-      <div class="row">
         <div class="col-md-6">
           <h3>Image Originale</h3>
-          <img src="{{ url_for('static', filename=RESULTAT.origine_image_path.split('/')[-1]) }}" alt="Image Originale"
+          <!-- <img src="{{ url_for('static', filename=RESULTAT.origine_image_path.split('/')[-1]) }}" alt="Image Originale"
+            class="img-fluid"> -->
+            <img src="/{{RESULTAT.origine_image_path}}" alt="Image Originale"
             class="img-fluid">
+
+            
         </div>
         <div class="col-md-6">
           <h3>Image Segmentée</h3>
-          <img src="data:image/jpeg;base64,{{ RESULTAT.segmented_image_base64_string }}" alt="Image Segmentée"
+          <img src="data:image/png;base64,{{ RESULTAT.segmented_image_base64_string }}" alt="Image Segmentée"
             class="img-fluid">
         </div>
-      </div>
+ 
       <h4 class="text-primary"> {{ RESULTAT.n_clusters }} Clustering </h4>
       <h4 class="text-info"> {{ RESULTAT.threshold }} Threshold </h4>
       {% endif %}
@@ -121,12 +124,12 @@
         </div>
         <div class="form-group">
           <label for="clustering">Clustering:</label>
-          <input type="number" id="clustering" name="clustering" class="form-control">
+          <input type="number" id="clustering" name="clustering" class="form-control" required min="2" value="2">
         </div>
         <div class="form-group">
-          <label for="vol">Threshold (between 0 and 255):</label>
-          <input type="range" id="vol" name="vol" min="0" max="255" oninput="updateRangeValue(this.value)">
-          <span id="rangeValue">0</span>
+          <label for="vol">Threshold (between 0 and 254):</label>
+          <input type="range" id="vol" name="vol" min="0" max="254"value='155' oninput="updateRangeValue(this.value)" required>
+          <span id="rangeValue">155</span>
         </div>
         <div class="form-group">
           <input type="submit" value="Test" class="btn btn-info">
