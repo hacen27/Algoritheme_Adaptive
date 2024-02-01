@@ -6,7 +6,7 @@ from warnings import filters
 
 from werkzeug.utils import secure_filename
 import matplotlib.pyplot as plt 
-
+import pydicom
 import cv2
 import numpy as np
 from sklearn.cluster import KMeans
@@ -26,7 +26,7 @@ app.secret_key = "cairocoders-ednalan"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
  
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif','dcm'])
  
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -35,14 +35,21 @@ def allowed_file(filename):
 @app.route('/')
 def home():
     return render_template('index.html')
+def loadDicomImage(filepath):
+    # print('filepath',filepath)
+    ds = pydicom.dcmread(filepath)
+    patientImage = ds.pixel_array
 
+    # plt.imshow(patientImage)
+    return patientImage
 
 def imageSegmentor(image_path,n_clusters=3,threshold=0):
     
     # Load image
     # image_path = "/content/drive/MyDrive/face_images/abdellahi.jpg"
-    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    print(image)
+    # image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    # print(image)
+    image = loadDicomImage(image_path)
     # Define a threshold
     # threshold = 100  # This threshold can be adjusted depending on the specific area and intensity desired
     image = image.astype(np.uint8)
@@ -94,7 +101,16 @@ def imageSegmentor(image_path,n_clusters=3,threshold=0):
 
     return image_base64
 
-
+def encode_dicom_to_base64(dicom_dataset):
+    pixel_array = dicom_dataset.pixel_array
+    fig, ax = plt.subplots()
+    ax.imshow(pixel_array, cmap=plt.cm.gray)
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    plt.close(fig)
+    buffer.seek(0)
+    base64_image = base64.b64encode(buffer.getvalue()).decode()
+    return f'data:image/png;base64,{base64_image}'
 
  
 @app.route('/', methods=['POST'])
@@ -114,24 +130,29 @@ def upload_image():
             file_names.append(filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename)) 
             
-            img = Image.open("static/uploads/"+ filename)
+            img = pydicom.dcmread("static/uploads/" + filename)
             # if img.width > 190 or img.height > 150:
             #     output_size = (190, 150)
             #     img.thumbnail(output_size)
-            img.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            print('img',img.getdata())
+            # pydicom.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            # print('img',img.getdata())
+            img.save_as(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
           
         else:
-            flash('Mettre un image de types  - png, jpg, jpeg, gif')
+            flash('Mettre un image un type valide dcm ')
             return redirect(request.url)
 
     flash('Image est charger avec succes')
     
     # flash(f'Clastring et Vol',clustering + threshold)
     # Zipp=zip(file_names,clustering,threshold)
-    
-    image_path = os.path.join('static/uploads/', file_names[0])
-    print(image_path)
+    # print(file_names[0])
+    # image_path = encode_dicom_to_base64(pydicom.dcmread("static/uploads/" + file_names[0]))
+    # os.path.join('static/uploads/', file_names[0])
+    # print(image_path)
+    orig_image_base64_string = encode_dicom_to_base64(img)
+
     image_base64_string = imageSegmentor(image_path,clustering,threshold)
     # print(image_base64_string)
     context = {
